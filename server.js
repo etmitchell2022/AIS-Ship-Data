@@ -10,17 +10,17 @@ const vesselCollection = 'vessels';
 const aisCollection = 'ais';
 const portCollection = 'ports';
 
-//Initialize Middleware
+//Initialize Middleware --Don't change
 app.use(express.json({ extended: false }));
 
-app.get('/', async (req, res) => {
+app.get('/api/vessels', async (req, res) => {
   const client = new MongoClient(dburl, {
     useUnifiedTopology: true,
   });
   try {
     await client.connect();
     const vessels = client.db(dbname).collection(vesselCollection);
-    const test = await vessels.findOne();
+    const test = await vessels.find().limit(500);
     res.send(test);
     client.close();
   } catch (error) {

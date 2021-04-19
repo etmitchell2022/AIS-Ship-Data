@@ -7,17 +7,17 @@ interface Location {
 interface MapProps {
   center?: Location;
   zoom?: number;
+  key?: string;
 }
+
 const Map: React.FC<MapProps> = ({ center, zoom }) => {
   return (
     <div className='map'>
       <GoogleMapReact
-        bootstrapURLKeys={{ key: 'AIzaSyDmK_l9TgYGkl6xLfPyB9YZEo6tSYxrNGg' }}
+        bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_MAPS_API || '' }}
         defaultCenter={center}
         defaultZoom={zoom}
-      >
-          
-      </GoogleMapReact>
+      ></GoogleMapReact>
     </div>
   );
 };
@@ -27,8 +27,8 @@ Map.defaultProps = {
     lat: 55.6761,
     lng: 12.5683,
   },
-
   zoom: 8,
+  key: '',
 };
 
 export default Map;
