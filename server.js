@@ -1,17 +1,31 @@
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express');
 const app = express();
+const MongoClient = require('mongodb').MongoClient;
 
-const connectDB = require('./database/connection');
-
-//Connect DB --Generate URI through Studio 3T
-connectDB();
+//Connect DB
+const dburl = 'mongodb://localhost:27017';
+const dbname = 'projectData';
+const vesselCollection = 'vessels';
+const aisCollection = 'ais';
+const portCollection = 'ports';
 
 //Initialize Middleware
 app.use(express.json({ extended: false }));
 
-app.get('/', (req, res) => {
-  res.send('Hello World');
+app.get('/', async (req, res) => {
+  const client = new MongoClient(dburl, {
+    useUnifiedTopology: true,
+  });
+  try {
+    await client.connect();
+    const vessels = client.db(dbname).collection(vesselCollection);
+    const test = await vessels.findOne();
+    res.send(test);
+    client.close();
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 app.listen(4000 || process.env.PORT, () => {
