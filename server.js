@@ -36,6 +36,31 @@ app.get('/api/ports', async (req, res) => {
   }
 });
 
+//Get array of ships and their information
+app.get('/api/vessels', async (req, res) => {
+  const client = new MongoClient(dburl, {
+    useUnifiedTopology: true,
+  });
+  try {
+    await client.connect();
+    const data = client.db(dbname).collection(vesselCollection);
+    const request = data
+      .aggregate([
+        {
+          $lookup: {
+            from: 'ais',
+            localField: 'MMSI',
+            foreignField: 'MMSI',
+            as: 'vesselInfo ',
+          },
+        },
+      ])
+    res.json(request);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 app.listen(4000 || process.env.PORT, () => {
   console.log('Server is up and running');
 });
