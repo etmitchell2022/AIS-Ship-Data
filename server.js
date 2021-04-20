@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const app = express();
+
 const MongoClient = require('mongodb').MongoClient;
 
 //Connect DB
@@ -12,16 +14,22 @@ const portCollection = 'ports';
 
 //Initialize Middleware --Don't change
 app.use(express.json({ extended: false }));
+app.use(cors());
 
-app.get('/api/vessels', async (req, res) => {
+//Get array of ports and their coordinates
+app.get('/api/ports', async (req, res) => {
   const client = new MongoClient(dburl, {
     useUnifiedTopology: true,
   });
   try {
     await client.connect();
-    const vessels = client.db(dbname).collection(vesselCollection);
-    const test = await vessels.find().limit(500);
-    res.send(test);
+    const data = client.db(dbname).collection(portCollection);
+    const request = await data
+      .find()
+      .project({ _id: 1, port_location: 1, longitude: 1, latitude: 1 })
+      .limit(150)
+      .toArray();
+    res.json(request);
     client.close();
   } catch (error) {
     console.log(error);
