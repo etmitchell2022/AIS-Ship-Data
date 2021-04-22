@@ -12,7 +12,7 @@ const vesselCollection = 'vessels';
 const aisCollection = 'ais';
 const portCollection = 'ports';
 
-//Initialize Middleware --Don't change
+//Initialize Middleware
 app.use(express.json({ extended: false }));
 app.use(cors());
 
